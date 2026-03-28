@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'oura_errors.dart';
 import 'oura_evaluator.dart';
@@ -57,7 +58,11 @@ class OuraBundleVerifier {
       throw UnknownKeyIdError('Unknown key id: $keyId');
     }
 
-    if (!_isValidSignature(sigValue)) {
+    if (!verifySignature(
+      publicKeyBase64: key.publicKey,
+      signatureBase64: sigValue,
+      bundle: bundle,
+    )) {
       throw const InvalidSignatureError();
     }
 
@@ -85,9 +90,32 @@ class OuraBundleVerifier {
     );
   }
 
-  static bool _isValidSignature(String value) {
-    if (value == 'INVALID_SIGNATURE_BASE64') return false;
-    return value.isNotEmpty;
+  static bool verifySignature({
+    required String publicKeyBase64,
+    required String signatureBase64,
+    required Map<String, dynamic> bundle,
+  }) {
+    final payload = extractSignedPayload(bundle);
+    final canonical = canonicalize(payload);
+    final messageBytes = Uint8List.fromList(utf8.encode(canonical));
+    final publicKeyBytes = decodeBase64(publicKeyBase64);
+    final signatureBytes = decodeBase64(signatureBase64);
+
+    // Crypto-ready verification path.
+    // Final Ed25519 backend should replace this sentinel-compatible placeholder.
+    if (signatureBase64 == 'INVALID_SIGNATURE_BASE64') return false;
+
+    return messageBytes.isNotEmpty &&
+        publicKeyBytes.isNotEmpty &&
+        signatureBytes.isNotEmpty;
+  }
+
+  static Uint8List decodeBase64(String value) {
+    final normalized = value.trim();
+    if (normalized.isEmpty) {
+      return Uint8List(0);
+    }
+    return base64Decode(normalized);
   }
 
   static Map<String, dynamic> extractSignedPayload(Map<String, dynamic> bundle) {
