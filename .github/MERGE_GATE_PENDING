@@ -1,0 +1,7 @@
+Pending items before final merge:
+
+1. Add authoritative shared fixtures under test/fixtures/
+2. Replace crypto-ready placeholders with real Ed25519 backend in React Native
+3. Replace crypto-ready placeholders with real Ed25519 backend in Flutter
+4. Run final parity validation across Flutter and React Native against the same fixtures
+5. Confirm CI passes with fixture-backed trust validation
