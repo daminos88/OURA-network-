@@ -1,0 +1,31 @@
+name: Merge Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  merge-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Evaluate current merge gate state
+        run: |
+          set -euo pipefail
+          echo "Merge gate scaffold active."
+          echo "Current repo state:"
+          echo "- Base structure workflows are enabled"
+          echo "- Runtime structure workflow is enabled"
+          echo "- Fixture-backed crypto verification is not yet enabled"
+          echo "- Final merge should wait for shared fixtures and real Ed25519 backend wiring"
+
+      - name: Soft fail only when explicit gate file exists and is incomplete
+        run: |
+          if [ -f .github/MERGE_GATE_PENDING ]; then
+            echo "MERGE_GATE_PENDING present. Merge remains blocked until pending items are resolved."
+            cat .github/MERGE_GATE_PENDING
+            exit 1
+          fi
+          echo "No explicit gate file present. Merge gate scaffold passes."
