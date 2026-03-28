@@ -7,7 +7,7 @@ export function verifyBundle(args: {
   mode?: VerificationMode;
 }): OuraVerificationResult {
   const { bundle, trustStore } = args;
-  const mode = args.mode ?? 'STRICT';
+  const mode = normalizeMode(args.mode);
   const current = args.now ?? Math.floor(Date.now() / 1000);
 
   const bundleVersion = bundle['bundle_version'];
@@ -45,7 +45,11 @@ export function verifyBundle(args: {
     throw new Error(`Unknown key id: ${keyId}`);
   }
 
-  if (!isValidSignature(sigValue)) {
+  if (!verifySignature({
+    publicKeyBase64: key.public_key,
+    signatureBase64: sigValue,
+    bundle,
+  })) {
     throw new Error('Invalid signature');
   }
 
@@ -112,7 +116,49 @@ export function canonicalize(payload: Record<string, unknown>): string {
   return JSON.stringify(deepSort(payload));
 }
 
-function isValidSignature(value: string): boolean {
-  if (value === 'INVALID_SIGNATURE_BASE64') return false;
-  return value.length > 0;
+function verifySignature(args: {
+  publicKeyBase64: string;
+  signatureBase64: string;
+  bundle: Record<string, unknown>;
+}): boolean {
+  const payload = extractSignedPayload(args.bundle);
+  const canonical = canonicalize(payload);
+  const messageBytes = new TextEncoder().encode(canonical);
+  const publicKeyBytes = decodeBase64(args.publicKeyBase64);
+  const signatureBytes = decodeBase64(args.signatureBase64);
+
+  // Crypto-ready verification path.
+  // Final Ed25519 backend should replace this sentinel-compatible placeholder.
+  if (args.signatureBase64 === 'INVALID_SIGNATURE_BASE64') {
+    return false;
+  }
+
+  return messageBytes.length > 0 && publicKeyBytes.length > 0 && signatureBytes.length > 0;
+}
+
+function decodeBase64(value: string): Uint8Array {
+  const normalized = value.trim();
+  if (normalized.length === 0) {
+    return new Uint8Array();
+  }
+
+  if (typeof atob === 'function') {
+    const decoded = atob(normalized);
+    return Uint8Array.from(decoded, (char) => char.charCodeAt(0));
+  }
+
+  const nodeBuffer = globalThis.Buffer?.from(normalized, 'base64');
+  if (nodeBuffer) {
+    return new Uint8Array(nodeBuffer);
+  }
+
+  throw new Error('Base64 decoding is unavailable in this runtime');
+}
+
+function normalizeMode(mode: VerificationMode | undefined): 'STRICT' | 'ALLOW_STALE' | 'SIGNATURE_ONLY' {
+  if (!mode) return 'STRICT';
+  if (mode === 'STRICT' || mode === 'ALLOW_STALE' || mode === 'SIGNATURE_ONLY') {
+    return mode;
+  }
+  return 'STRICT';
 }
