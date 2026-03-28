@@ -1,0 +1,28 @@
+name: PR Readiness
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Summarize current readiness
+        run: |
+          set -euo pipefail
+          echo "PR readiness scaffold active."
+          echo "- Runtime structure workflows are enabled."
+          echo "- Fixture-backed crypto validation is still pending shared fixtures."
+          echo "- Final Ed25519 enforcement should be enabled only after real fixtures are committed."
+
+      - name: Soft gate for known pending items
+        run: |
+          echo "This workflow documents current readiness only."
+          echo "Merge readiness still depends on:"
+          echo "1. shared fixtures in test/fixtures/"
+          echo "2. real Ed25519 backend wiring in both runtimes"
+          echo "3. final parity validation across Flutter and React Native"
