@@ -3,7 +3,7 @@ class OuraError implements Exception {
   const OuraError(this.message);
 
   @override
-  String toString() => '4runtimeType: 4message';
+  String toString() => '$runtimeType: $message';
 }
 
 class InvalidPolicyError extends OuraError {
