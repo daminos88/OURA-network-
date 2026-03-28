@@ -1,0 +1,38 @@
+name: Test Runner Scaffold
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  placeholder-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Summarize current test state
+        run: |
+          set -euo pipefail
+          echo "Placeholder test runner active."
+          echo "Current state:"
+          echo "- Runtime structure checks are enabled"
+          echo "- PR readiness workflow is enabled"
+          echo "- Merge gate workflow is enabled"
+          echo "- Shared fixtures are still pending"
+          echo "- Real Ed25519 backend wiring is still pending"
+
+      - name: Detect fixture presence
+        run: |
+          set -euo pipefail
+          if [ -d test/fixtures ]; then
+            echo "Fixture directory exists."
+            find test/fixtures -maxdepth 3 -type f | sort
+          else
+            echo "No test/fixtures directory present yet."
+          fi
+
+      - name: Placeholder runtime test phase
+        run: |
+          echo "No fixture-backed runtime tests are executed yet."
+          echo "This workflow becomes the handoff point for real Flutter/RN parity and trust validation once fixtures are committed."
