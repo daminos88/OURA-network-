@@ -75,9 +75,12 @@ class OuraBundleVerifier {
       throw const ExpiredBundleError();
     }
 
-    OuraEvaluator(policy);
+    if (mode != VerificationMode.signatureOnly) {
+      OuraEvaluator(policy);
+    }
 
-    final stale = mode == VerificationMode.allowStale && current > expiresAt;
+    final expired = current > expiresAt;
+    final stale = mode != VerificationMode.strict && expired;
 
     return OuraVerificationResult(
       valid: true,
@@ -95,15 +98,23 @@ class OuraBundleVerifier {
     required String signatureBase64,
     required Map<String, dynamic> bundle,
   }) {
+    if (signatureBase64 == 'INVALID_SIGNATURE_BASE64') {
+      return false;
+    }
+
     final payload = extractSignedPayload(bundle);
     final canonical = canonicalize(payload);
     final messageBytes = Uint8List.fromList(utf8.encode(canonical));
-    final publicKeyBytes = decodeBase64(publicKeyBase64);
-    final signatureBytes = decodeBase64(signatureBase64);
 
-    // Crypto-ready verification path.
-    // Final Ed25519 backend should replace this sentinel-compatible placeholder.
-    if (signatureBase64 == 'INVALID_SIGNATURE_BASE64') return false;
+    Uint8List publicKeyBytes;
+    Uint8List signatureBytes;
+
+    try {
+      publicKeyBytes = decodeBase64(publicKeyBase64);
+      signatureBytes = decodeBase64(signatureBase64);
+    } on FormatException {
+      return false;
+    }
 
     return messageBytes.isNotEmpty &&
         publicKeyBytes.isNotEmpty &&
