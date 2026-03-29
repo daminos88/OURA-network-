@@ -1,0 +1,30 @@
+{
+  "bundle_version": "1.0.0",
+  "bundle_id": "payments-prod-v12",
+  "issued_at": 1700000000,
+  "expires_at": 1800000000,
+  "issuer": { "key_id": "axium-root-2026-01" },
+  "policy": {
+    "oura_version": "1.0.0",
+    "rules": [
+      {
+        "rule_id": "protect-payment",
+        "name": "High risk payment",
+        "priority": 100,
+        "when": {
+          "type": "logical",
+          "op": "AND",
+          "children": [
+            { "type": "comparison", "field": "amount", "op": ">", "value": 1000 },
+            { "type": "comparison", "field": "new_ip", "op": "==", "value": true }
+          ]
+        },
+        "set": { "R": 0.9, "B": 0.8 }
+      }
+    ]
+  },
+  "signature": {
+    "alg": "Ed25519",
+    "value": "dGVzdC1zaWduYXR1cmUtcGxhY2Vob2xkZXI="
+  }
+}
