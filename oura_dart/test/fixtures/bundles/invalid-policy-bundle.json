@@ -1,0 +1,15 @@
+{
+  "bundle_version": "1.0.0",
+  "bundle_id": "payments-prod-v12",
+  "issued_at": 1700000000,
+  "expires_at": 2000000000,
+  "issuer": { "key_id": "axium-root-2026-01" },
+  "policy": {
+    "oura_version": "1.0.0",
+    "rules": []
+  },
+  "signature": {
+    "alg": "Ed25519",
+    "value": "dGVzdC1zaWduYXR1cmUtcGxhY2Vob2xkZXI="
+  }
+}
