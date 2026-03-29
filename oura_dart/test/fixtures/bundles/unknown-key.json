@@ -1,0 +1,28 @@
+{
+  "bundle_version": "1.0.0",
+  "bundle_id": "payments-prod-v12",
+  "issued_at": 1700000000,
+  "expires_at": 2000000000,
+  "issuer": { "key_id": "unknown-key-id" },
+  "policy": {
+    "oura_version": "1.0.0",
+    "rules": [
+      {
+        "rule_id": "protect-payment",
+        "name": "High risk payment",
+        "priority": 100,
+        "when": {
+          "type": "comparison",
+          "field": "amount",
+          "op": ">",
+          "value": 1000
+        },
+        "set": { "R": 0.9, "B": 0.8 }
+      }
+    ]
+  },
+  "signature": {
+    "alg": "Ed25519",
+    "value": "dGVzdC1zaWduYXR1cmUtcGxhY2Vob2xkZXI="
+  }
+}
