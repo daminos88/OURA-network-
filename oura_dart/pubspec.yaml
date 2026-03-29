@@ -1,0 +1,9 @@
+name: oura_sdk
+description: Official Dart SDK for the OURA verified policy protocol
+version: 2.0.0
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  cryptography: ^2.7.0
