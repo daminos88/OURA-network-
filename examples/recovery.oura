@@ -1,0 +1,7 @@
+rule recovery {
+  when:
+    Δtrust > 0.2
+    and risk < 0.4
+  then:
+    rejoin
+}
