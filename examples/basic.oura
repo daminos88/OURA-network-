@@ -1,0 +1,7 @@
+rule degrade_service {
+  when:
+    Δtrust < -0.2
+    and pressure > 3
+  then:
+    reduce_traffic
+}
