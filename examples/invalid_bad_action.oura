@@ -1,0 +1,6 @@
+rule bad_action {
+  when:
+    trust < 0.5
+  then:
+    shutdown
+}
