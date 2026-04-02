@@ -1,0 +1,13 @@
+rule same {
+  when:
+    trust < 0.5
+  then:
+    warn
+}
+
+rule same {
+  when:
+    trust < 0.4
+  then:
+    isolate quorum
+}
