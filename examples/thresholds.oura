@@ -1,0 +1,6 @@
+rule cpu_pressure {
+  when:
+    pressure > Θ.cpu
+  then:
+    reduce_traffic
+}
