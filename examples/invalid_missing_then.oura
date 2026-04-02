@@ -1,0 +1,4 @@
+rule broken {
+  when:
+    trust < 0.5
+}
