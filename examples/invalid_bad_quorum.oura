@@ -1,0 +1,6 @@
+rule bad_quorum {
+  when:
+    trust < 0.5
+  then:
+    warn quorum
+}
