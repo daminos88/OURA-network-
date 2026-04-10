@@ -1,0 +1,20 @@
+{
+  "name": "oura-network",
+  "version": "0.1.0-audit",
+  "private": true,
+  "type": "module",
+  "description": "AXIUM / OURA execution-preparation and simulation core",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "probe:live-loop-v4": "node src/demo/live_loop_v4_probe.js",
+    "probe:orchestrated": "node src/demo/orchestrated_execution_v1_probe.js",
+    "probe:trade-bundle-v2": "node src/demo/trade_bundle_v2_probe.js",
+    "probe:gas-feed": "node src/demo/gas_feed_v1_probe.js",
+    "probe:replay": "node src/demo/replay_harness_v1_probe.js"
+  },
+  "dependencies": {
+    "ethers": "^6.13.2"
+  }
+}
